@@ -1,13 +1,13 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import StudentsList from './app/screens/StudentsList';
 
 const App = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.white }}>
-      <Text>Welcome to React Native!</Text>
-    </View>
+    <PaperProvider>
+      <StudentsList />
+    </PaperProvider>
   );
 };
 

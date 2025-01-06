@@ -1,0 +1,226 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "profilePicture": "person1",
+    "registrationNumber": "REG001",
+    "parentDetails": [],
+    "class": "10th Grade",
+    "age": 15,
+    "dateOfBirth": "2009-04-15",
+    "mobileNumber": "+1234567890",
+    "email": "john.doe@example.com",
+    "address": "123 Main Street, Cityville",
+    "enrolledDate": "2023-06-10"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "profilePicture": "person2",
+    "registrationNumber": "REG002",
+    "parentDetails": [
+      {
+        "guardianName": "David Smith",
+        "guardianEmail": "david.smith@example.com",
+        "guardianMobile": "+1234567891",
+        "guardianProfilePicture": "person3"
+      },
+      {
+        "guardianName": "Clara Smith",
+        "guardianEmail": "clara.smith@example.com",
+        "guardianMobile": "+1234567893",
+        "guardianProfilePicture": "person4"
+      },
+      {
+        "guardianName": "Clara Smith",
+        "guardianEmail": "clara.smith@example.com",
+        "guardianMobile": "+1234567893",
+        "guardianProfilePicture": "person10"
+      }
+    ],
+    "class": "11th Grade",
+    "age": 16,
+    "dateOfBirth": "2008-08-22",
+    "mobileNumber": "+1234567891",
+    "email": "jane.smith@example.com",
+    "address": "456 Oak Avenue, Townsville",
+    "enrolledDate": "2022-08-15"
+  },
+  {
+    "id": 3,
+    "name": "Alice Johnson",
+    "profilePicture": "person3",
+    "registrationNumber": "REG003",
+    "parentDetails": [
+      {
+        "guardianName": "Anna Johnson",
+        "guardianEmail": "anna.johnson@example.com",
+        "guardianMobile": "+1234567802",
+        "guardianProfilePicture": "person2"
+      },
+      {
+        "guardianName": "William Johnson",
+        "guardianEmail": "william.johnson@example.com",
+        "guardianMobile": "+1234567804",
+        "guardianProfilePicture": "person5"
+      },
+      {
+        "guardianName": "John Jhnson",
+        "guardianEmail": "william.johnson@example.com",
+        "guardianMobile": "+1234567804",
+        "guardianProfilePicture": "person8"
+      }
+    ],
+    "class": "12th Grade",
+    "age": 17,
+    "dateOfBirth": "2007-11-10",
+    "mobileNumber": "+1234567892",
+    "email": "alice.johnson@example.com",
+    "address": "789 Elm Street, Villagetown",
+    "enrolledDate": "2021-07-20"
+  },
+  {
+    "id": 4,
+    "name": "Emma Brown",
+    "profilePicture": "person4",
+    "registrationNumber": "REG004",
+    "parentDetails": [],
+    "class": "9th Grade",
+    "age": 14,
+    "dateOfBirth": "2009-02-05",
+    "mobileNumber": "+1234567893",
+    "email": "emma.brown@example.com",
+    "address": "321 Maple Road, Forest City",
+    "enrolledDate": "2023-03-25"
+  },
+  {
+    "id": 5,
+    "name": "Liam Wilson",
+    "profilePicture": "person5",
+    "registrationNumber": "REG005",
+    "parentDetails": [
+      {
+        "guardianName": "Evelyn Wilson",
+        "guardianEmail": "evelyn.wilson@example.com",
+        "guardianMobile": "+1234567803",
+        "guardianProfilePicture": "person3"
+      },
+      {
+        "guardianName": "Megan Wilson",
+        "guardianEmail": "megan.wilson@example.com",
+        "guardianMobile": "+1234567805",
+        "guardianProfilePicture": "person5"
+      }
+    ],
+    "class": "8th Grade",
+    "age": 13,
+    "dateOfBirth": "2011-01-20",
+    "mobileNumber": "+1234567894",
+    "email": "liam.wilson@example.com",
+    "address": "789 Pine Lane, Riverwood",
+    "enrolledDate": "2024-01-15"
+  },
+  {
+    "id": 6,
+    "name": "Olivia Taylor",
+    "profilePicture": "person6",
+    "registrationNumber": "REG006",
+    "parentDetails": [],
+    "class": "7th Grade",
+    "age": 12,
+    "dateOfBirth": "2012-07-05",
+    "mobileNumber": "+1234567895",
+    "email": "olivia.taylor@example.com",
+    "address": "564 Willow Street, Lakeside",
+    "enrolledDate": "2021-12-20"
+  },
+  {
+    "id": 7,
+    "name": "Mason Davis",
+    "profilePicture": "person7",
+    "registrationNumber": "REG007",
+    "parentDetails": [
+      {
+        "guardianName": "Lucas Davis",
+        "guardianEmail": "lucas.davis@example.com",
+        "guardianMobile": "+1234567895",
+        "guardianProfilePicture": "person5"
+      }
+    ],
+    "class": "6th Grade",
+    "age": 11,
+    "dateOfBirth": "2013-05-10",
+    "mobileNumber": "+1234567896",
+    "email": "mason.davis@example.com",
+    "address": "432 Birch Avenue, Meadowview",
+    "enrolledDate": "2022-05-10"
+  },
+  {
+    "id": 8,
+    "name": "Sophia Martinez",
+    "profilePicture": "person8",
+    "registrationNumber": "REG008",
+    "parentDetails": [
+      {
+        "guardianName": "Elijah Martinez",
+        "guardianEmail": "elijah.martinez@example.com",
+        "guardianMobile": "+1234567896",
+        "guardianProfilePicture": "person6"
+      },
+      {
+        "guardianName": "Maria Martinez",
+        "guardianEmail": "maria.martinez@example.com",
+        "guardianMobile": "+1234567898",
+        "guardianProfilePicture": "person8"
+      },
+      {
+        "guardianName": "Maria Martinez",
+        "guardianEmail": "maria.martinez@example.com",
+        "guardianMobile": "+1234567898",
+        "guardianProfilePicture": "person19"
+      }
+    ],
+    "class": "5th Grade",
+    "age": 10,
+    "dateOfBirth": "2014-09-18",
+    "mobileNumber": "+1234567897",
+    "email": "sophia.martinez@example.com",
+    "address": "214 Oakwood Drive, Sunnyside",
+    "enrolledDate": "2020-09-18"
+  },
+  {
+    "id": 9,
+    "name": "James Anderson",
+    "profilePicture": "person9",
+    "registrationNumber": "REG009",
+    "parentDetails": [],
+    "class": "4th Grade",
+    "age": 9,
+    "dateOfBirth": "2015-06-12",
+    "mobileNumber": "+1234567898",
+    "email": "james.anderson@example.com",
+    "address": "345 Cedar Lane, Springfield",
+    "enrolledDate": "2019-07-12"
+  },
+  {
+    "id": 10,
+    "name": "Ava Thomas",
+    "profilePicture": "person10",
+    "registrationNumber": "REG010",
+    "parentDetails": [
+      {
+        "guardianName": "Grace Thomas",
+        "guardianEmail": "grace.thomas@example.com",
+        "guardianMobile": "+1234567804",
+        "guardianProfilePicture": "person7"
+      }
+    ],
+    "class": "3rd Grade",
+    "age": 8,
+    "dateOfBirth": "2016-05-23",
+    "mobileNumber": "+1234567899",
+    "email": "ava.thomas@example.com",
+    "address": "876 Cherry Street, Brookfield",
+    "enrolledDate": "2018-11-23"
+  }
+]
