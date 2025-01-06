@@ -1,30 +1,14 @@
-
-
 import React from 'react';
-import {
+import { Text, View } from 'react-native';
 
-  Text,
-  View,
-} from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-
-const App = ()=>{
+const App = () => {
   return (
-     <View
-          style={{flex:1,
-            backgroundColor: Colors.white,
-          }}>
-         <Text>
-            Welcome to React Native!
-         </Text>
-          
-        </View>
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <Text>Welcome to React Native!</Text>
+    </View>
   );
-}
-
-
+};
 
 export default App;
