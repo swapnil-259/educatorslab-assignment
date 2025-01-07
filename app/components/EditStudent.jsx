@@ -155,11 +155,11 @@ const EditStudent = ({
                     Guardians Details
                   </Text>
                   <>
-                    {editedStudent.parentDetails.map((parent, index) => {
+                    {editedStudent?.parentDetails.map((parent, index) => {
                       return (
                         <View key={index}>
                           <Image
-                            source={localImages[parent.guardianProfilePicture]}
+                            source={localImages[parent?.guardianProfilePicture]}
                             style={{ height: 100, width: 100 }}
                           ></Image>
                           <Text
@@ -184,7 +184,7 @@ const EditStudent = ({
                               borderRadius: 8,
                             }}
                             placeholder="Name"
-                            value={parent.guardianName}
+                            value={parent?.guardianName}
                             onChangeText={(text) =>
                               setEditedStudent({ ...parent, guardianName: text })
                             }
@@ -236,7 +236,7 @@ const EditStudent = ({
                               borderRadius: 8,
                             }}
                             placeholder="Email Address"
-                            value={parent.guardianEmail}
+                            value={parent?.guardianEmail}
                             onChangeText={(text) =>
                               setEditedStudent({ ...parent, guardianEmail: text })
                             }

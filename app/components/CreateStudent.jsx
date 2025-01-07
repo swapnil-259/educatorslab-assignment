@@ -6,15 +6,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { localImages } from '../utils/imageMapping';
 
-const CreateStudent = ({
-  createBottomSheetRef,
-  hideCreateBottomSheet,
-  handleDatePress,
-  showDatePicker,
-  onDateChange,
-  handleCreateStudent,
-}) => {
+const CreateStudent = ({ createBottomSheetRef, hideCreateBottomSheet, handleCreateStudent }) => {
   const [newStudent, setNewStudent] = useState({
+    registrationNumber: '',
     profilePicture: 'person1',
     name: '',
     mobileNumber: '',
@@ -24,6 +18,26 @@ const CreateStudent = ({
     class: '',
     parentDetails: [],
   });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDatePress = () => {
+    setShowDatePicker(true);
+  };
+
+  const onCreateDateChange = (event, selectedDate) => {
+    if (event.type === 'set') {
+      const currentDate = selectedDate || new Date();
+      const formattedDate = currentDate.toISOString().split('T')[0];
+
+      setNewStudent((prevState) => ({
+        ...prevState,
+        dateOfBirth: formattedDate,
+      }));
+      setShowDatePicker(false);
+    } else {
+      setShowDatePicker(false);
+    }
+  };
 
   const addGuardian = () => {
     setNewStudent((prev) => ({
@@ -206,7 +220,7 @@ const CreateStudent = ({
               value={newStudent.dateOfBirth ? new Date(newStudent.dateOfBirth) : new Date()}
               mode="date"
               display="default"
-              onChange={(event, selectedDate) => onDateChange(event, selectedDate)}
+              onChange={(event, selectedDate) => onCreateDateChange(event, selectedDate)}
             />
           )}
 

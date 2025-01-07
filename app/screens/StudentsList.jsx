@@ -167,6 +167,7 @@ const StudentsList = () => {
           return;
         }
       }
+      newStudent.registrationNumber = `REG${Math.floor(Math.random() * 1000000)}`;
 
       const storedStudents = await AsyncStorage.getItem('users');
       const students = storedStudents ? JSON.parse(storedStudents) : [];
@@ -473,9 +474,6 @@ const StudentsList = () => {
 
         <CreateStudent
           createBottomSheetRef={createBottomSheetRef}
-          showDatePicker={showDatePicker}
-          onDateChange={onDateChange}
-          handleDatePress={handleDatePress}
           handleCreateStudent={handleCreateStudent}
           hideCreateBottomSheet={hideCreateBottomSheet}
         ></CreateStudent>
