@@ -1,7 +1,7 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from '@react-native-community/blur';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -15,6 +15,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Appbar, Checkbox, PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import CreateStudent from '../components/CreateStudent';
+import EditStudent from '../components/EditStudent';
 import StudentCard from '../components/StudentCard';
 import studentsData from '../data/students.json';
 import { localImages } from '../utils/imageMapping';
@@ -26,34 +28,56 @@ const StudentsList = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
 
   const bottomSheetRef = useRef(null);
   const editBottomSheetRef = useRef(null);
+  const createBottomSheetRef = useRef(null);
+
+  const initializeStudents = async () => {
+    try {
+      const storedUsers = await AsyncStorage.getItem('users');
+      if (storedUsers) {
+        setStudents(JSON.parse(storedUsers));
+      } else {
+        await AsyncStorage.setItem('users', JSON.stringify(studentsData));
+        setStudents(studentsData);
+      }
+    } catch (error) {
+      console.error('Error initializing students:', error);
+    }
+  };
+
+  useEffect(() => {
+    initializeStudents();
+  }, []);
 
   const showBottomSheet = (student) => {
+    console.log('showBottomSheet', bottomSheetRef);
     setSelectedStudent(student);
     setIsSheetOpen(true);
-
     bottomSheetRef.current?.expand();
   };
 
-  const filteredStudents = studentsData.filter((student) => {
+  const filteredStudents = students.filter((student) => {
     return (
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.registrationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.mobileNumber.includes(searchQuery)
     );
   });
+
   const hideBottomSheet = () => {
     bottomSheetRef.current?.close();
     setIsSheetOpen(false);
     setSelectedStudent(null);
   };
+
   const showEditBottomSheet = (student) => {
-    setEditedStudent(student);
     setIsEditSheetOpen(true);
-    console.log(showDatePicker);
     editBottomSheetRef.current?.expand();
+    setEditedStudent(student);
   };
 
   const hideEditBottomSheet = () => {
@@ -61,10 +85,35 @@ const StudentsList = () => {
     setIsEditSheetOpen(false);
   };
 
+  const showCreateBottomSheet = () => {
+    console.log(createBottomSheetRef);
+    setIsCreateSheetOpen(true);
+    createBottomSheetRef.current?.expand();
+  };
+
+  const hideCreateBottomSheet = () => {
+    createBottomSheetRef.current?.close();
+    setIsCreateSheetOpen(false);
+  };
+
+  const updateStudentsInStorage = async (updatedStudents) => {
+    try {
+      await AsyncStorage.setItem('users', JSON.stringify(updatedStudents));
+    } catch (error) {
+      console.error('Error updating students in storage:', error);
+    }
+  };
+
   const handleSaveChanges = () => {
-    setSelectedStudent(editedStudent);
+    const updatedStudents = students.map((student) =>
+      student.id === editedStudent.id ? editedStudent : student
+    );
+    setStudents(updatedStudents);
+    updateStudentsInStorage(updatedStudents);
+    initializeStudents();
     hideEditBottomSheet();
   };
+
   const onDateChange = (event, selectedDate) => {
     if (event.type === 'set') {
       const currentDate = selectedDate || new Date();
@@ -82,6 +131,54 @@ const StudentsList = () => {
 
   const handleDatePress = () => {
     setShowDatePicker(true);
+  };
+
+  const handleCreateStudent = async (newStudent) => {
+    try {
+      if (!newStudent.name.trim()) {
+        alert('Student name is required.');
+        return;
+      }
+      if (!newStudent.mobileNumber.trim() || newStudent.mobileNumber.length !== 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      if (!newStudent.email.trim() || !/\S+@\S+\.\S+/.test(newStudent.email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      if (!newStudent.dateOfBirth) {
+        newStudent.dateOfBirth == '2023-06-10';
+      }
+      for (let i = 0; i < newStudent.parentDetails.length; i++) {
+        const guardian = newStudent.parentDetails[i];
+        if (!guardian.guardianName.trim()) {
+          alert(`Guardian ${i + 1} name is required.`);
+          return;
+        }
+
+        if (!guardian.guardianMobile.trim() || guardian.guardianMobile.length !== 10) {
+          alert(`Guardian ${i + 1} must have a valid 10-digit mobile number.`);
+          return;
+        }
+
+        if (!guardian.guardianEmail.trim() || !/\S+@\S+\.\S+/.test(guardian.guardianEmail)) {
+          alert(`Guardian ${i + 1} must have a valid email address.`);
+          return;
+        }
+      }
+
+      const storedStudents = await AsyncStorage.getItem('users');
+      const students = storedStudents ? JSON.parse(storedStudents) : [];
+      const updatedStudents = [...students, newStudent];
+      await AsyncStorage.setItem('users', JSON.stringify(updatedStudents));
+      alert('Student created and saved successfully!');
+      initializeStudents();
+      hideCreateBottomSheet();
+    } catch (error) {
+      console.error('Error saving student:', error);
+      alert('Failed to save the student. Please try again.');
+    }
   };
 
   return (
@@ -141,8 +238,9 @@ const StudentsList = () => {
             </View>
             <Checkbox></Checkbox>
           </View>
+
           <ScrollView>
-            {studentsData.map((student, index) => {
+            {students.map((student, index) => {
               return (
                 <TouchableOpacity
                   key={index}
@@ -155,10 +253,24 @@ const StudentsList = () => {
               );
             })}
           </ScrollView>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 30,
+              right: 30,
+              borderRadius: 50,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={showCreateBottomSheet}
+          >
+            <MaterialCommunityIcons name="plus-circle" size={60} color="black" />
+          </TouchableOpacity>
         </View>
         {isSheetOpen && (
           <BlurView style={StyleSheet.absoluteFill} blurType="dark" blurAmount={10} />
         )}
+
         <BottomSheet
           ref={bottomSheetRef}
           index={-1}
@@ -180,7 +292,7 @@ const StudentsList = () => {
             <View style={{ flexDirection: 'row' }}>
               <MaterialCommunityIcons
                 name="pencil-outline"
-                size={24}
+                size={26}
                 color="#000"
                 onPress={() => {
                   showEditBottomSheet(selectedStudent);
@@ -188,7 +300,7 @@ const StudentsList = () => {
               />
               <MaterialCommunityIcons
                 name="account-check-outline"
-                size={24}
+                size={26}
                 style={{ paddingLeft: 10 }}
                 color="#000"
                 onPress={hideBottomSheet}
@@ -345,286 +457,28 @@ const StudentsList = () => {
               : null}
           </BottomSheetScrollView>
         </BottomSheet>
-        {isEditSheetOpen && (
-          <BottomSheet
-            ref={editBottomSheetRef}
-            index={-1}
-            snapPoints={['70%', '90%', '90%']}
-            enableDynamicSizing={false}
-            handleIndicatorStyle={{ backgroundColor: Colors.white }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingLeft: 20,
-                paddingRight: 20,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color: Colors.black,
-                }}
-              >
-                Edit Student Details
-              </Text>
-              <MaterialCommunityIcons
-                name={'close-circle-outline'}
-                color={'red'}
-                size={25}
-                onPress={() => {
-                  hideEditBottomSheet();
-                }}
-              ></MaterialCommunityIcons>
-            </View>
-
-            <BottomSheetScrollView>
-              <View style={{ padding: 20 }}>
-                <Image
-                  source={localImages[editedStudent.profilePicture]}
-                  style={{ height: 100, width: 100 }}
-                ></Image>
-                <Text
-                  style={{ fontSize: 16, color: Colors.black, paddingTop: 20, paddingLeft: 15 }}
-                >
-                  Name
-                </Text>
-
-                <TextInput
-                  style={{
-                    borderWidth: 0.5,
-                    borderColor: '#D3D3D3',
-                    margin: 10,
-                    padding: 15,
-                    fontSize: 16,
-                    color: '#A3A3A3',
-                    borderRadius: 8,
-                  }}
-                  placeholder="Name"
-                  value={editedStudent.name}
-                  onChangeText={(text) => setEditedStudent({ ...editedStudent, name: text })}
-                />
-                <Text
-                  style={{ fontSize: 16, color: Colors.black, paddingTop: 20, paddingLeft: 15 }}
-                >
-                  Phone Number
-                </Text>
-                <TextInput
-                  style={{
-                    borderWidth: 0.5,
-                    borderColor: '#D3D3D3',
-                    margin: 10,
-                    padding: 15,
-                    fontSize: 16,
-                    color: '#A3A3A3',
-                    borderRadius: 8,
-                  }}
-                  placeholder="Mobile Number"
-                  value={editedStudent.mobileNumber}
-                  onChangeText={(text) =>
-                    setEditedStudent({ ...editedStudent, mobileNumber: text })
-                  }
-                />
-                <Text
-                  style={{ fontSize: 16, color: Colors.black, paddingTop: 20, paddingLeft: 15 }}
-                >
-                  Email Address
-                </Text>
-                <TextInput
-                  style={{
-                    borderWidth: 0.6,
-                    borderColor: '#D3D3D3',
-                    margin: 10,
-                    padding: 15,
-                    fontSize: 16,
-                    color: '#A3A3A3',
-                    borderRadius: 8,
-                  }}
-                  placeholder="Email Address"
-                  value={editedStudent.email}
-                  onChangeText={(text) => setEditedStudent({ ...editedStudent, email: text })}
-                />
-                <Text
-                  style={{ fontSize: 16, color: Colors.black, paddingTop: 20, paddingLeft: 15 }}
-                >
-                  Date of Birth
-                </Text>
-                <TouchableOpacity
-                  onPress={handleDatePress}
-                  style={{
-                    borderWidth: 0.6,
-                    borderColor: '#D3D3D3',
-                    margin: 10,
-                    padding: 15,
-                    fontSize: 16,
-                    color: '#A3A3A3',
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 16, color: '#A3A3A3' }}>
-                    {editedStudent.dateOfBirth || 'Select Date of Birth'}
-                  </Text>
-                </TouchableOpacity>
-
-                {showDatePicker && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={new Date(editedStudent.dateOfBirth)}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => onDateChange(event, selectedDate)}
-                  />
-                )}
-
-                {editedStudent.parentDetails.length > 0 && (
-                  <>
-                    <Text
-                      style={{
-                        fontSize: 22,
-                        fontWeight: 'bold',
-                        color: Colors.black,
-                        paddingTop: 20,
-                        paddingBottom: 20,
-                      }}
-                    >
-                      Guardians Details
-                    </Text>
-                    <>
-                      {editedStudent.parentDetails.map((parent, index) => {
-                        return (
-                          <View key={index}>
-                            <Image
-                              source={localImages[parent.guardianProfilePicture]}
-                              style={{ height: 100, width: 100 }}
-                            ></Image>
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: Colors.black,
-                                paddingTop: 20,
-                                paddingLeft: 15,
-                              }}
-                            >
-                              Name
-                            </Text>
-
-                            <TextInput
-                              style={{
-                                borderWidth: 0.5,
-                                borderColor: '#D3D3D3',
-                                margin: 10,
-                                padding: 15,
-                                fontSize: 16,
-                                color: '#A3A3A3',
-                                borderRadius: 8,
-                              }}
-                              placeholder="Name"
-                              value={parent.guardianName}
-                              onChangeText={(text) =>
-                                setEditedStudent({ ...parent, guardianName: text })
-                              }
-                            />
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: Colors.black,
-                                paddingTop: 20,
-                                paddingLeft: 15,
-                              }}
-                            >
-                              Phone Number
-                            </Text>
-                            <TextInput
-                              style={{
-                                borderWidth: 0.5,
-                                borderColor: '#D3D3D3',
-                                margin: 10,
-                                padding: 15,
-                                fontSize: 16,
-                                color: '#A3A3A3',
-                                borderRadius: 8,
-                              }}
-                              placeholder="Mobile Number"
-                              value={parent.guardianMobile}
-                              onChangeText={(text) =>
-                                setEditedStudent({ ...parent, guardianMobile: text })
-                              }
-                            />
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: Colors.black,
-                                paddingTop: 20,
-                                paddingLeft: 15,
-                              }}
-                            >
-                              Email Address
-                            </Text>
-                            <TextInput
-                              style={{
-                                borderWidth: 0.6,
-                                borderColor: '#D3D3D3',
-                                margin: 10,
-                                padding: 15,
-                                fontSize: 16,
-                                color: '#A3A3A3',
-                                borderRadius: 8,
-                              }}
-                              placeholder="Email Address"
-                              value={parent.guardianEmail}
-                              onChangeText={(text) =>
-                                setEditedStudent({ ...parent, guardianEmail: text })
-                              }
-                            />
-                          </View>
-                        );
-                      })}
-                    </>
-                  </>
-                )}
-
-                <View
-                  style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}
-                >
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: '#fff',
-                      padding: 15,
-                      borderRadius: 10,
-                      alignItems: 'center',
-                      flex: 1,
-                      marginRight: 5,
-                      borderWidth: 0.5,
-                      borderColor: Colors.black,
-                    }}
-                    onPress={() => {
-                      hideEditBottomSheet();
-                    }}
-                  >
-                    <Text style={{ color: '#000', fontSize: 16 }}>Cancel</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: '#000',
-                      padding: 15,
-                      borderRadius: 10,
-                      alignItems: 'center',
-                      flex: 1,
-                      marginLeft: 5,
-                    }}
-                    onPress={handleSaveChanges}
-                  >
-                    <Text style={{ color: '#FFF', fontSize: 16 }}>Save Changes</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </BottomSheetScrollView>
-          </BottomSheet>
+        {isCreateSheetOpen && (
+          <BlurView style={StyleSheet.absoluteFill} blurType="dark" blurAmount={10} />
         )}
+        <EditStudent
+          editBottomSheetRef={editBottomSheetRef}
+          editedStudent={editedStudent}
+          setEditedStudent={setEditedStudent}
+          showDatePicker={showDatePicker}
+          onDateChange={onDateChange}
+          handleDatePress={handleDatePress}
+          handleSaveChanges={handleSaveChanges}
+          hideEditBottomSheet={hideEditBottomSheet}
+        ></EditStudent>
+
+        <CreateStudent
+          createBottomSheetRef={createBottomSheetRef}
+          showDatePicker={showDatePicker}
+          onDateChange={onDateChange}
+          handleDatePress={handleDatePress}
+          handleCreateStudent={handleCreateStudent}
+          hideCreateBottomSheet={hideCreateBottomSheet}
+        ></CreateStudent>
       </PaperProvider>
     </GestureHandlerRootView>
   );
